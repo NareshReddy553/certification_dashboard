@@ -23,7 +23,7 @@ def get_clients_ws_deptartments(request):
 # @permission_classes([IsAuthenticated])
 def dashBoard_data(request):
     inputdata = request.data
-    filters=data = {}
+    filters,data = {},{}
 
     # Add 'dept_id' filter if present
     if inputdata.get("dept_id"):
