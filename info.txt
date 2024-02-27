@@ -1,0 +1,5 @@
+# To active virtual env
+certification-dashboard-env\Scripts\activate
+
+# Add models from existing DB
+python manage.py inspectdb >models_file.py
