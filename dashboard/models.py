@@ -135,7 +135,7 @@ class Certificates(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
     is_verified = models.IntegerField(blank=True, null=True)
     client = models.ForeignKey(Clients, on_delete=models.DO_NOTHING)
-    departments = models.ForeignKey(Departments, on_delete=models.DO_NOTHING)
+    dept = models.ForeignKey(Departments, on_delete=models.DO_NOTHING)
 
     class Meta:
         managed = False
