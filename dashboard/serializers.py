@@ -14,7 +14,7 @@ class CertificationSerializer(serializers.ModelSerializer):
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Departments
-        fields =[ 'dept_no','dept_name','is_active']
+        fields =[ 'dept_id','dept_name','is_active']
 
 class ClientsSerializer(serializers.ModelSerializer):
     departments = DepartmentSerializer(many=True, read_only=True)
