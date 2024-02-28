@@ -39,7 +39,7 @@ def dashBoard_data(request):
     # Perform further processing as needed
     total_certificates_generated = queryset.values('id').distinct().count()
     active_users_count = queryset.filter(is_active=True).values('id').distinct().count()
-    users_certificate_verified_count = queryset.filter(verified=True).values('id').distinct().count()
+    users_certificate_verified_count = queryset.filter(is_verified=True).values('id').distinct().count()
     
     data['total_certificates_generated']=total_certificates_generated
     data['active_users_count']=active_users_count
