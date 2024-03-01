@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets,status
 from rest_framework import permissions
 from rest_framework import renderers
 from rest_framework.decorators import action
@@ -27,3 +27,15 @@ class CertificatesViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+        
+        
+    @action(detail=True, methods=['patch'],name="update_verified")
+    def certificates_verify(self, request, pk=None):
+        object = self.get_object()
+        object.is_verified=True
+        serializer=self.serializer_class(object, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
