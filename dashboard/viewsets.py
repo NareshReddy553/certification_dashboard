@@ -19,6 +19,29 @@ class CertificatesViewSet(viewsets.ModelViewSet):
     queryset = Certificates.objects.all()
     serializer_class = CertificationSerializer
     
+    def apply_dynamic_filters(self, queryset, **kwargs):
+        """
+        Apply dynamic filters to the given queryset based on provided kwargs.
+        """
+        for param, value in kwargs.items():
+            if hasattr(Certificates, param):
+                filter_kwargs = {param: value}
+                queryset = queryset.filter(**filter_kwargs)
+        return queryset
+    
+    def list(self, request, *args, **kwargs):
+        
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Retrieve filter values from request parameters
+        filter_params = request.query_params.dict()
+
+        # Apply dynamic filters based on request parameters
+        queryset = self.apply_dynamic_filters(queryset, **filter_params)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def highlight(self, request, *args, **kwargs):
@@ -27,7 +50,9 @@ class CertificatesViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-        
+    
+      
+    
         
     @action(detail=True, methods=['patch'],name="update_verified")
     def certificates_verify(self, request, pk=None):
