@@ -1,5 +1,7 @@
+import hashlib
 from django.shortcuts import render
 from rest_framework.response import Response
+from rest_framework import status
 from django.db.models import Count
 from django.utils.timezone import now
 from datetime import timedelta
@@ -7,9 +9,11 @@ from datetime import timedelta
 from rest_framework.decorators import api_view
 from django.db.models import Count, Case, When, IntegerField
 from django.db.models.functions import ExtractWeekDay, ExtractMonth
+from config.settings import WATCH_FOLDER_PATH
 
-from dashboard.models import Certificates, Clients
+from dashboard.models import Certificates, Clients, File, Departments
 from dashboard.serializers import ClientsSerializer
+from dashboard.util import calculate_sha256, extract_text_by_coordinates, get_text_with_coordinates
 
 
 @api_view(["GET"])
@@ -141,3 +145,30 @@ def dashboard_chart_data(request):
         }
 
     return Response({'weekly': weekly_data, 'monthly': monthly_data})
+
+
+@api_view(['GET'])
+def pdf_parsing_for_data(request):
+    import os
+    folder_path=WATCH_FOLDER_PATH
+    if not os.path.exists(folder_path):
+        print("Folder path does not exist.")
+        return []
+    
+    processed_files = set(File.objects.filter(is_active=True).values_list('name', flat=True))
+
+    for filename in os.listdir(WATCH_FOLDER_PATH):
+        if filename not in processed_files:
+            file_path = os.path.join(WATCH_FOLDER_PATH, filename)
+            sha256_hash = calculate_sha256(file_path)
+            Certificates_obj=Certificates.objects.filter(certificate_hash=sha256_hash).first()
+            if Certificates_obj:
+                x1, y1, x2, y2 = 468.9062,222.17653069999994,696.3088112,260.2438307  # Example coordinates
+                extracted_text = extract_text_by_coordinates(file_path,x1, y1, x2, y2)
+                if extracted_text:
+                    dept_obj=Departments.objects.filter(dept_name=extracted_text).first()
+                    Certificates_obj.dept_id=dept_obj.pk
+                    Certificates_obj.client_id=dept_obj.client_id
+                    Certificates_obj.save()
+                    return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)

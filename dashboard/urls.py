@@ -1,7 +1,7 @@
 # from django.conf.urls import include, url
 from django.urls import path, include
 from rest_framework import routers
-from dashboard.views import dashBoard_data, dashboard_chart_data,get_clients_ws_deptartments
+from dashboard.views import dashBoard_data, dashboard_chart_data,get_clients_ws_deptartments,pdf_parsing_for_data
 
 from dashboard.viewsets import CertificatesViewSet
 
@@ -16,5 +16,6 @@ urlpatterns = [
     path(r'dashBoard_data', dashBoard_data),
     path(r'dashBoard_chart_data', dashboard_chart_data),
     path(r'clients_departments',get_clients_ws_deptartments),
+    path(r'watch_files',pdf_parsing_for_data),
     path("", include(router.urls)),
 ]

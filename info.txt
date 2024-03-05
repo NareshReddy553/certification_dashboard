@@ -1,3 +1,6 @@
+# To create virtual env
+python -m venv .certification-dashboard-env
+
 # To active virtual env
 certification-dashboard-env\Scripts\activate
 

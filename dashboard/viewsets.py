@@ -1,4 +1,5 @@
 from rest_framework import viewsets,status
+
 from rest_framework import permissions
 from rest_framework import renderers
 from rest_framework.decorators import action
@@ -6,6 +7,7 @@ from rest_framework.response import Response
 
 from dashboard.models import Certificates
 from dashboard.serializers import CertificationSerializer
+from config.pagination import StandardResultsSetPagination
 
 
     
@@ -18,6 +20,7 @@ class CertificatesViewSet(viewsets.ModelViewSet):
     """
     queryset = Certificates.objects.all()
     serializer_class = CertificationSerializer
+    pagination_class = StandardResultsSetPagination
     
     def apply_dynamic_filters(self, queryset, **kwargs):
         """
@@ -38,6 +41,11 @@ class CertificatesViewSet(viewsets.ModelViewSet):
 
         # Apply dynamic filters based on request parameters
         queryset = self.apply_dynamic_filters(queryset, **filter_params)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

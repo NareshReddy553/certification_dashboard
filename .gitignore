@@ -41,3 +41,5 @@ media/
 
 # Dependency directories
 venv/
+
+.certification-dashboard-env/
