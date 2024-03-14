@@ -5,4 +5,22 @@ python -m venv .certification-dashboard-env
 certification-dashboard-env\Scripts\activate
 
 # Add models from existing DB
-python manage.py inspectdb >models_file.py
+python manage.py inspectdb >output.py
+
+
+
+
+The list of important field names for a DB table containing info of "university Degree/course certificates:
+
+- Institute_or_university_name - Name of the university offering the course
+- ⁠certificate_id - Unique identifier for each certificate extracted from Certificate(pdf copy)
+- ⁠course_name - Name of the educational course
+- ⁠Degree_name - Name of Degree (If applicable)
+- ⁠Semester number - The number of the corresponding Semester (If applicable)
+- ⁠student_id - Unique identifier for the student who earned the certificate
+- ⁠student_name - Name of the student who earned the certificate
+- ⁠certificate_type - Type of certificate (e.g., Course completion certificate, specialization certificate, Overall Degree Certifcate)
+- ⁠issued_date - Date when the certificate was issued
+- ⁠completion_date - Date when the course was completed
+- ⁠grade - Grade or score achieved by the student in the course.
+- expiration_date - Date when the certificate expires or becomes invalid (if applicable)

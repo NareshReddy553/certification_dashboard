@@ -95,18 +95,29 @@ if "test" in sys.argv:
     DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
     DATABASES["default"]["NAME"] = "databasename.db3"
     
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "Blockchain",
+#         "USER": "admin",
+#         "PASSWORD": "crunch-time-admin",
+#         "HOST": "crunch-time.crmeuqwsiwsg.eu-north-1.rds.amazonaws.com",
+#         "PORT": "3306",
+#         "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+#     }
+# }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "Blockchain",
-        "USER": "admin",
-        "PASSWORD": "crunch-time-admin",
-        "HOST": "crunch-time.crmeuqwsiwsg.eu-north-1.rds.amazonaws.com",
-        "PORT": "3306",
-        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+        "NAME": "cis_4Gi7WC_test",
+        "USER": "cis_4Gi7WC_test",
+        "PASSWORD": "JxcUG91xPyhkE1IF",
+        "HOST": "188.166.94.246",
+        "PORT": "36887",
+        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'",'connect_timeout': 300},
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
