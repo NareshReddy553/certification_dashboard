@@ -86,3 +86,120 @@ def get_text_with_coordinates(file_path, target_text):
     pdf_document.close()
 
     return text_with_coordinates
+
+
+
+import fitz
+import re
+from difflib import get_close_matches
+def extract_and_split_text_from_pdf(pdf_path):
+    desired_data = {}
+    with fitz.open(pdf_path) as doc:
+        page = doc[0]  # Get the first (and only) page
+        text = page.get_text()
+        # Split text on the single page
+        words = text.split()
+        if words:
+            # for student id
+            student_id=words[words.index('ID:') + 1]
+            desired_data['student_id'] = re.sub(r'\([^)]*\)', '', student_id)
+            
+            # for student name
+            start_index = words.index('that')
+            end_index = words.index('(Student')
+            student_name = words[start_index + 1:end_index]
+            desired_data['student_name']=' '.join(student_name).strip()
+            
+            # for student grade
+            grade_index=words.index('Grade')
+            desired_data['grade']=words[grade_index+1]
+            
+            # for student semeter
+            sem_index=words.index('Semester')
+            desired_data['semester']=re.sub(r'\D', '', words[sem_index-1])
+            
+            # certificate issued date
+            issued_index=words.index('Issued')
+            issued_date = words[issued_index - 3:issued_index]
+            desired_data['issued_date']=' '.join(issued_date).strip()
+            
+            # certificate completion date
+            completion_index=words.index('Issued')
+            completion_date = words[completion_index +2:completion_index+5]
+            desired_data['completion_date']=' '.join(completion_date).strip()
+            
+            # student course
+            course_start_index = words.index('titled')
+            matches = get_close_matches("offered", words, n=1)
+            course_end_index = words.index(matches[0] if matches else 'ofered')
+            course_name = words[course_start_index + 1:course_end_index]
+            desired_data['course']=' '.join(course_name).strip()
+            
+            # student department
+            department_start_index = words.index('in')
+            department_end_index = words.index('Grade')
+            department_name = words[department_start_index+1:department_end_index]
+            desired_data['department']=' '.join(department_name).strip()
+            
+            
+            return desired_data
+            
+            
+            
+            
+        
+        
+    return words
+
+
+
+def extract_course_name(text):
+    parts = text.split("ofered by", 1)
+    course_name = parts[0].strip()
+    return course_name
+
+def extract_department_degree_names(text):
+    parts = text.split("in", 1)
+    degree_name = parts[0].strip()
+    department_name = parts[1].strip()
+    return degree_name,department_name
+
+def extract_student_id(text):
+    # Define the pattern to match the student ID
+    pattern = r"Student ID: ([A-Za-z0-9]+)"
+    
+    # Search for the pattern in the text
+    match = re.search(pattern, text)
+    
+    if match:
+        # Extract and return the student ID
+        return match.group(1)
+    else:
+        return None
+    
+def extract_student_id(text):
+    # Define the pattern to match the student ID
+    pattern = r"Student ID: ([A-Za-z0-9]+)"
+    
+    # Search for the pattern in the text
+    match = re.search(pattern, text)
+    
+    if match:
+        # Extract and return the student ID
+        return match.group(1)
+    else:
+        return None
+
+    
+def extract_certificate_id(text):
+    # Define the pattern to match the student ID
+    pattern = r"Certifcate ID ([A-Za-z0-9]+)"
+    
+    # Search for the pattern in the text
+    match = re.search(pattern, text)
+    
+    if match:
+        # Extract and return the student ID
+        return match.group(1)
+    else:
+        return None

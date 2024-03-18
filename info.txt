@@ -2,7 +2,7 @@
 python -m venv .certification-dashboard-env
 
 # To active virtual env
-certification-dashboard-env\Scripts\activate
+.certification-dashboard-env\Scripts\activate
 
 # Add models from existing DB
 python manage.py inspectdb >output.py
