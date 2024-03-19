@@ -36,16 +36,17 @@ def certificate_data_extraction_from_pdf(file_path):
         print(extracted_texts)
     
         if extracted_texts:
-            student_id=extract_student_id(extracted_texts[0])
+            student_id=extract_student_id(extracted_texts[4])
             student_name = extracted_texts[10]
-            student_grade = extracted_texts[12].split()[1].strip('“”')
-            student_sem = re.sub(r'\D', '',extracted_texts[4].split()[0])
-            student_certificate_issued_date = datetime.strptime(extracted_texts[6], "%B %d, %Y").date()
-            student_course_completion_date = datetime.strptime(extracted_texts[8], "%B %d, %Y").date()
-            certificate_id=extract_certificate_id(extracted_texts[2])
-            degree_name,department_name=extract_department_degree_names(extracted_texts[3])
-            certificate_type=extracted_texts[5]
-            course_name=extract_course_name(extracted_texts[1])
+            student_grade = extracted_texts[7].split()[1].strip('“”') if len(extracted_texts) > 7 else None
+            student_sem = re.sub(r'\D', '',extracted_texts[8].split()[0] if len(extracted_texts) > 8 else None)
+            student_certificate_issued_date = datetime.strptime(extracted_texts[12], "%B %d, %Y").date()
+            student_course_completion_date = datetime.strptime(extracted_texts[13], "%B %d, %Y").date()
+            # certificate_id=extract_certificate_id(extracted_texts[2])
+            certificate_id=extracted_texts[11] if len(extracted_texts) > 11 else None
+            degree_name,department_name=extract_department_degree_names(extracted_texts[6])
+            certificate_type=extracted_texts[9]
+            course_name=extract_course_name(extracted_texts[5])
             
             student_dict = {}
             if student_id or student_name:
@@ -53,6 +54,10 @@ def certificate_data_extraction_from_pdf(file_path):
                 student_dict["student_name"] = student_name
                 student_obj = Student.objects.create(**student_dict)
                 certificates_obj.student_id = student_obj.pk
+            else:
+                student_obj = Student.objects.create()
+                certificates_obj.student_id = student_obj.pk
+                
             
             if any([student_grade, student_sem, student_certificate_issued_date, student_course_completion_date]):
                 student_marks_data = {

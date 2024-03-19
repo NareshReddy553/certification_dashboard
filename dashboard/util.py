@@ -155,15 +155,18 @@ def extract_and_split_text_from_pdf(pdf_path):
 
 
 def extract_course_name(text):
-    parts = text.split("ofered by", 1)
+    parts = text.split("offered by", 1)
     course_name = parts[0].strip()
     return course_name
 
 def extract_department_degree_names(text):
-    parts = text.split("in", 1)
-    degree_name = parts[0].strip()
-    department_name = parts[1].strip()
-    return degree_name,department_name
+    parts = re.split(r'\b(in)\b', text, 1)
+    if len(parts) > 1:
+        degree_name = parts[0].strip()
+        department_name = parts[2].strip()
+        return degree_name, department_name
+    else:
+        return None, None
 
 def extract_student_id(text):
     # Define the pattern to match the student ID

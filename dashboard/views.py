@@ -160,7 +160,7 @@ def certificate_data_parsing(request):
             return Response("Folder path does not exist.")
         WATCH_FOLDER_PATH = folder_path.data_value
         for filename in os.listdir(WATCH_FOLDER_PATH):
-            file_path = os.path.join(WATCH_FOLDER_PATH, filename)
+            file_path = os.path.join("C:\\Users\\ADMIN\\Desktop\\watch_folder", "Aaron Giles_issue.pdf")
             certificate_data_extraction_from_pdf(file_path)
         
         return Response({"message": "Certificate data parsing successful."})
