@@ -4,14 +4,15 @@ import pdfplumber
 
 
 def calculate_sha256(file_path):
-        sha256_hash = hashlib.sha256()
-        with open(file_path, 'rb') as f:
-            while True:
-                data = f.read(65536)  # Read in 64KB chunks
-                if not data:
-                    break
-                sha256_hash.update(data)
-        return sha256_hash.hexdigest()
+    print("in side sha")
+    sha256_hash = hashlib.sha256()
+    with open(file_path, 'rb') as f:
+        while True:
+            data = f.read(65536)  # Read in 64KB chunks
+            if not data:
+                break
+            sha256_hash.update(data)
+    return sha256_hash.hexdigest()
     
 # def extract_text_by_coordinates(pdf_path, x1, y1, x2, y2):
 #     extracted_text = ""

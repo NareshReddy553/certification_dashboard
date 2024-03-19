@@ -48,12 +48,13 @@ class CertificatesViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         
         queryset = self.filter_queryset(self.get_queryset())
-
+        
         # Retrieve filter values from request parameters
         filter_params = request.query_params.dict()
         
         # Check if the parameter to disable pagination is provided
         disable_pagination = filter_params.pop('disable_pagination', None)
+        queryset=self.apply_dynamic_filters(queryset, **filter_params)
 
         if disable_pagination:
             return self.non_paginated_response(queryset, filter_params)

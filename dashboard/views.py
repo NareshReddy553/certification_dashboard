@@ -67,7 +67,7 @@ def dashboard_chart_data(request):
 
     # Add 'client_id' filter if present
     if inputdata.get("issuer_id"):
-        filters['issuer_id'] = inputdata.get("issuer_id")
+        filters['user_id'] = inputdata.get("issuer_id")
 
     # Apply filters to the queryset
     objects = Certificates.objects.filter(**filters)

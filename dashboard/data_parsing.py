@@ -21,16 +21,20 @@ def extract_text(file_path):
         lines = page_text.split('\n')
         return lines
     
-@transaction.atomic
+# @transaction.atomic
 def certificate_data_extraction_from_pdf(file_path):
-    
-    sha256_hash = calculate_sha256(file_path)
-    
-    certificates_obj = Certificates.objects.filter(certificate_hash=sha256_hash).first()
-    if not certificates_obj or certificates_obj.is_parsed:
-        return None
-    extracted_texts=extract_text(file_path)
     try:
+        
+        sha256_hash = calculate_sha256(file_path)
+        print("in side extraction")
+        print(sha256_hash)
+        print('--------------')
+        certificates_obj = Certificates.objects.filter(certificate_hash=sha256_hash).first()
+        if not certificates_obj or certificates_obj.is_parsed:
+            return None
+        extracted_texts=extract_text(file_path)
+        print(extracted_texts)
+    
         if extracted_texts:
             student_id=extract_student_id(extracted_texts[0])
             student_name = extracted_texts[10]
@@ -82,7 +86,8 @@ def certificate_data_extraction_from_pdf(file_path):
             certificates_obj.certificate_id=certificate_id
             certificates_obj.is_parsed = True
             certificates_obj.save()
-            return None
+            return {"Result":"sucess"}
     except Exception as e:
-        return None    
+        print(e)
+        return e    
         

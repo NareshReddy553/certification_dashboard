@@ -8,11 +8,15 @@ from dashboard.data_parsing import certificate_data_extraction_from_pdf
 
 class FileHandler(FileSystemEventHandler):
     def on_created(self, event):
+        print("File created event detected.")
         file_path = event.src_path
+        print("File path:", file_path)
         if file_path.endswith('.pdf'):
-            certificate_data_extraction_from_pdf(event.src_path)
-            
-        print(f'File {event.src_path} has been created')
+            print("Processing PDF file.")
+            res = certificate_data_extraction_from_pdf(file_path)
+            print("Result:", res)
+         
+        
 
 class Command(BaseCommand):
     help = 'Watch specified directory for file changes and parse '
