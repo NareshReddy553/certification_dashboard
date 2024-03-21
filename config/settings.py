@@ -115,7 +115,7 @@ DATABASES = {
         "PASSWORD": "JxcUG91xPyhkE1IF",
         "HOST": "188.166.94.246",
         "PORT": "36887",
-        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'",'connect_timeout': 300},
+        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'",'connect_timeout': 30},
     }
 }
 

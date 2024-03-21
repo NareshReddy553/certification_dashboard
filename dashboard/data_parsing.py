@@ -26,9 +26,7 @@ def certificate_data_extraction_from_pdf(file_path):
     try:
         
         sha256_hash = calculate_sha256(file_path)
-        print("in side extraction")
         print(sha256_hash)
-        print('--------------')
         certificates_obj = Certificates.objects.filter(certificate_hash=sha256_hash).first()
         if not certificates_obj or certificates_obj.is_parsed:
             return None
