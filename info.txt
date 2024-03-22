@@ -7,6 +7,9 @@ python -m venv .certification-dashboard-env
 # Add models from existing DB
 python manage.py inspectdb >output.py
 
+# To run watch folders
+python manage.py watch_files
+
 
 
 
