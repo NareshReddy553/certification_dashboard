@@ -29,10 +29,11 @@ class UsersSerializer(serializers.ModelSerializer):
     
     def get_departments(self, instance):
         try:
-            certificates = Certificates.objects.filter(id=instance.id)
+            certificates =Certificates.objects.filter(user=instance)
             all_departments = []
             for certificate in certificates:
-                all_departments.append(certificate.department)
+                if certificate.department_id:
+                    all_departments.append(certificate.department)
             return DepartmentSerializer(all_departments, many=True).data
         except Certificates.DoesNotExist:
             return []
