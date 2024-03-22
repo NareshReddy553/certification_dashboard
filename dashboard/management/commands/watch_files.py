@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
     def get_directory_paths_from_table(self):
         directory_paths = []
-        configurations = Configurations.objects.filter(data_key='windowsdestpath')
+        configurations = Configurations.objects.filter(data_key='certificateDestinationPath')
         for configuration in configurations:
             directory_paths.append(configuration.data_value)
         return directory_paths
