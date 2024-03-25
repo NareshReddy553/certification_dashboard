@@ -109,12 +109,24 @@ if "test" in sys.argv:
 #     }
 # }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "cis_4Gi7WC_test",
+#         "USER": "cis_4Gi7WC_test",
+#         "PASSWORD": "JxcUG91xPyhkE1IF",
+#         "HOST": "188.166.94.246",
+#         "PORT": "36887",
+#         "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'",'connect_timeout': 30},
+#     }
+# }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "cis_4Gi7WC_test",
-        "USER": "cis_4Gi7WC_test",
-        "PASSWORD": "JxcUG91xPyhkE1IF",
+        "NAME": "ieee_poc_4Gi7WC_remote",
+        "USER": "ieee_poc_4Gi7WC_remote",
+        "PASSWORD": "jIS-26M@Wm4!2)EM",
         "HOST": "188.166.94.246",
         "PORT": "36887",
         "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'",'connect_timeout': 30},
@@ -165,13 +177,14 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
         'dashboard': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True,
+            
         },
     },
 }

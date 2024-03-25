@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,6 +13,7 @@ from django.db.models import Count, Case, When, IntegerField
 from django.db.models.functions import ExtractWeekDay, ExtractMonth
 from config.settings import WATCH_FOLDER_PATH
 from dashboard.data_parsing import certificate_data_extraction_from_pdf
+from dashboard.generate_certificate import pdf_creation
 from dashboard.models import Certificates, Configurations, Users
 
 from dashboard.serializers import UsersSerializer
@@ -167,3 +169,37 @@ def certificate_data_parsing(request):
     
     except Exception as e:
         return Response(e)
+    
+    
+@api_view(["PATCH"])
+def generate_certificate_view(request):
+    input_data = request.data
+
+    required_fields = {
+        'names': 'name',
+        'university': 'university',
+        'department': 'department',
+        'degree': 'degree',
+        'course':'course',
+        'type': 'type',
+        'dest_path': 'destination path'
+    }
+
+    error = {field_key: f'{field_name} is required in the payload' for field_key, field_name in required_fields.items() if not input_data.get(field_key)}
+    if error:
+        return Response(error, status=status.HTTP_400_BAD_REQUEST)
+
+    # Extract data from input
+    names = input_data['names']
+    university = input_data['university']
+    department = input_data['department']
+    degree = input_data['degree']
+    course = input_data.get('course')  # Optional
+    type = input_data['type']
+    dest_path = input_data['dest_path']
+
+    # Generate certificates for each name
+    for name in names:
+        pdf_creation(name, random.choice(university), random.choice(course), random.choice(department), random.choice(degree), random.choice(type),dest_path)
+
+    return Response(status=status.HTTP_201_CREATED)

@@ -17,3 +17,5 @@ setuptools==69.2.0
 sqlparse==0.4.4
 tzdata==2024.1
 watchdog==4.0.0
+reportlab
+PyPDF2
