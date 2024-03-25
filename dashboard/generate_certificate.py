@@ -111,7 +111,8 @@ def pdf_creation(name,university,course,department,degree,type,dest_path):
     page.merge_page(new_page)
     output_pdf.add_page(page)
     if os.path.isdir(dest_path[0]):
-        old=dest_path[0]+name+'.pdf'
+        crt_file_name=name+'.pdf'
+        old=os.path.join(dest_path[0],crt_file_name)
         with open(old, "wb") as f:
             output_pdf.write(f)
     return None
