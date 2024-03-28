@@ -1,4 +1,5 @@
 import random
+from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
@@ -171,9 +172,15 @@ def certificate_data_parsing(request):
         return Response(e)
     
     
-@api_view(["PATCH"])
+@api_view(["GET"])
 def generate_certificate_view(request):
-    input_data = request.data
+    input_data = {  "names":["James Walker","Velma Clemons","Kibo Underwood","Louis Mcgee","Phyllis Paul","Zenaida Decker","Gillian Tillman","Constance Boone","Giselle Lancaster","Kirsten Mcdowell","Solomon Ray","John Marshall","Merrill Carney","Hakeem Gillespie","Hayden Boyer","Griffin Mcleod","Allistair Patton","Rina Slater","Caldwell Skinner","Portia Galloway","Noelle Valentine","Abel Clay","Stephanie Kent","Axel Petty","Nevada Morales","Fuller Bush","Quinn Mayo","Marcia Shepard","Kieran Moody","Brielle Thompson","Hashim Gay","Deborah Roberts","Nomlanga Clarke","Elaine Downs","Christen Ballard","Dacey Baxter","Nasim Sampson","Yoshi Sherman","Veda Malone","Scarlett Fisher","Meredith Parsons","Jerome Buckley","Jacob Foreman","Gisela Robertson","Sylvia Kent","Mercedes King","Logan Madden","Ryan Herman","Cora Frazier","Yolanda Carter","Hadassah Lowe","Ingrid Yang","Trevor Spence","Iola West","Kitra Sparks","Carly Bray","Leilani Beard","Cameron Bowen","Hilda Oneill","Ori Short","Xandra Cardenas","Audrey Todd","Ferdinand Lloyd","Kareem Mcdowell","Aaron Giles","Keefe Schneider","Kasper Ballard","Maris Turner","Ava Robertson","Gillian Benton","Dora Landry","Aimee Eaton","Iola Sutton","Jana Reed","Alfonso Love","Ciaran Mosley","Justin Evans","Ryder Combs","Nelle Skinner","Jakeem Rivera","Hyatt Long","Tanisha Stanton","Alec Pittman","Octavia Ashley","Curran Merrill","Laith Gibbs","Walter Skinner","Burke Horn","Alexander Walton","Cally Wilkinson","Gary Mcintosh","Jacob Greer","Fitzgerald Mueller","Claire Roberts","Kuame Harrell","Kaseem Hurst","Irene Witt","Courtney Nash","Lane Torres","Jonas Vinson"],
+                    "university":["Massachusetts Institute of Technology (MIT)","Harvard University","Stanford University","University of California Berkeley (UCB)","University of Chicago","University of Pennsylvania","Cornell University","California Institute of Technology (Caltech)","Yale University","Princeton University","Columbia University","Johns Hopkins University","University of California, Los Angeles (UCLA)","University of Michigan-Ann Arbor","New York University (NYU)","Northwestern University","Carnegie Mellon University","Duke University","University of Texas at Austin","University of California, San Diego (UCSD)","University of Washington","University of Illinois at Urbana-Champaign","Brown University","Pennsylvania State University","Boston University"],
+                    "department":["Department of Computer Science","Department of Electrical Engineering","Department of Mechanical Engineering","Department of Civil Engineering","Department of Chemical Engineering","Department of Aerospace Engineering","Department of Biomedical Engineering","Department of Industrial Engineering","Department of Software Engineering","Department of Information Technology","Department of Mathematics","Department of Physics","Department of Chemistry","Department of Biology","Department of Environmental Science","Department of Earth Sciences","Department of Psychology","Department of Sociology","Department of Economics","Department of Political Science","Department of History","Department of English","Department of Foreign Languages","Department of Linguistics","Department of Philosophy","Department of Business Administration","Department of Finance","Department of Marketing","Department of Operations Management","Department of Human Resource Management","Department of Accounting","Department of Law","Department of Medicine","Department of Nursing","Department of Pharmacy","Department of Dentistry","Department of Public Health","Department of Social Work","Department of Education","Department of Fine Arts","Department of Music","Department of Theatre Arts","Department of Film Studies","Department of Journalism","Department of Communication","Department of Library Science","Department of Physical Education","Department of Nutrition and Dietetics","Department of Agriculture","Department of Veterinary Science"],
+                    "degree":["Bachelor of Arts (BA)","Bachelor of Science (BS/BSc)","Bachelor of Fine Arts (BFA)","Bachelor of Business Administration (BBA)","Bachelor of Engineering (BEng)","Bachelor of Laws (LLB)","Bachelor of Education (BEd)","Bachelor of Music (BMus)","Bachelor of Architecture (BArch)","Bachelor of Nursing (BN)","Bachelor of Social Work (BSW)","Bachelor of Commerce (BCom)","Bachelor of Technology (BTech)","Bachelor of Philosophy (BPhil)","Master of Arts (MA)","Master of Science (MS/MSc)","Master of Business Administration (MBA)","Master of Fine Arts (MFA)","Master of Engineering (MEng)","Master of Laws (LLM)","Master of Education (MEd)","Master of Music (MMus)","Master of Architecture (MArch)","Master of Social Work (MSW)","Master of Commerce (MCom)","Master of Technology (MTech)","Master of Philosophy (MPhil)","Doctor of Philosophy (PhD)","Doctor of Medicine (MD)","Doctor of Education (EdD)","Doctor of Business Administration (DBA)","Doctor of Engineering (EngD)","Doctor of Psychology (PsyD)","Doctor of Nursing Practice (DNP)","Doctor of Jurisprudence (JD)","Doctor of Dental Surgery (DDS)","Doctor of Veterinary Medicine (DVM)","Juris Doctor (JD)","Doctor of Medicine (MD)","Doctor of Dental Surgery (DDS)","Doctor of Pharmacy (PharmD)","Doctor of Optometry (OD)","Doctor of Physical Therapy (DPT)","Doctor of Occupational Therapy (OTD)","Doctor of Chiropractic (DC)","Doctor of Podiatric Medicine (DPM)","Associate of Arts (AA)","Associate of Science (AS)","Associate of Applied Science (AAS)","Associate of Business Administration (ABA)","Associate of Engineering (AEng)","Associate of Arts in Teaching (AAT)","Associate of Nursing (AN)","Associate of Occupational Studies (AOS)"],
+                    "course":["Computer Science Fundamentals","Data Structures and Algorithms","Software Engineering","Artificial Intelligence","Machine Learning","Cybersecurity","Database Management","Computer Networks","Accounting","Marketing","Finance","Operations Management","Human Resource Management","Business Analytics","Entrepreneurship","Strategic Management","Electrical Engineering","Mechanical Engineering","Civil Engineering","Aerospace Engineering","Chemical Engineering","Environmental Engineering","Biomedical Engineering","Industrial Engineering"],
+                    "type":["Course completion certificate", "specialization certificate", "Overall Degree Certifcate"]
+                }
 
     required_fields = {
         'names': 'name',
@@ -182,7 +189,6 @@ def generate_certificate_view(request):
         'degree': 'degree',
         'course':'course',
         'type': 'type',
-        'dest_path': 'destination path'
     }
 
     error = {field_key: f'{field_name} is required in the payload' for field_key, field_name in required_fields.items() if not input_data.get(field_key)}
@@ -196,10 +202,11 @@ def generate_certificate_view(request):
     degree = input_data['degree']
     course = input_data.get('course')  # Optional
     type = input_data['type']
-    dest_path = input_data['dest_path']
 
-    # Generate certificates for each name
-    for name in names:
-        pdf_creation(name, random.choice(university), random.choice(course), random.choice(department), random.choice(degree), random.choice(type),dest_path)
-
-    return Response(status=status.HTTP_201_CREATED)
+   
+    filename=random.choice(names)
+    pdf_content=pdf_creation(filename, random.choice(university), random.choice(course), random.choice(department), random.choice(degree), random.choice(type))
+    
+    response = HttpResponse(pdf_content, content_type='application/pdf')
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    return response

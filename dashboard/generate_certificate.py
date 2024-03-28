@@ -1,4 +1,5 @@
 
+from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from PyPDF2 import PdfReader, PdfWriter
 from reportlab.platypus import Paragraph
@@ -51,10 +52,10 @@ def generate_two_random_dates():
     
     return first_date, second_date
 
-def pdf_creation(name,university,course,department,degree,type,dest_path):
+def pdf_creation(name,university,course,department,degree,type):
     rel_path = os.path.join('media', 'static', 'cert-2-1.pdf')
     file_path = os.path.join(BASE_DIR, rel_path)
-    name,university,course,department,degree,type,dest_path=name,university,course,department,degree,type,dest_path
+    name,university,course,department,degree,type=name,university,course,department,degree,type
     input_pdf = PdfReader(open(file_path, "rb"))
     output_pdf = PdfWriter()
     page = input_pdf.pages[0]
@@ -110,10 +111,19 @@ def pdf_creation(name,university,course,department,degree,type,dest_path):
     new_page = new_pdf.pages[0]
     page.merge_page(new_page)
     output_pdf.add_page(page)
-    if os.path.isdir(dest_path[0]):
-        crt_file_name=name+'.pdf'
-        old=os.path.join(dest_path[0],crt_file_name)
-        with open(old, "wb") as f:
-            output_pdf.write(f)
-    return None
+    # if os.path.isdir(dest_path[0]):
+    #     crt_file_name=name+'.pdf'
+    #     old=os.path.join(dest_path[0],crt_file_name)
+    #     with open(old, "wb") as f:
+    #         output_pdf.write(f)
+            
+    # reader = PdfReader(packet)
+    # writer = PdfWriter()
+    # writer.add_page(reader.pages[0])
+
+    output_buffer = BytesIO()
+    output_pdf.write(output_buffer)
+    output_buffer.seek(0)
+
+    return output_buffer.getvalue()
 
