@@ -1,5 +1,3 @@
-
-# syntax=docker/dockerfile:1
 FROM python:3.10
 
 RUN  apt-get update
@@ -16,5 +14,4 @@ RUN pip install -r requirements.txt
 COPY . /code/
 
 EXPOSE 8080
-CMD ["/bin/sh", "-c", "python manage.py runserver"]
-
+CMD ["/bin/sh", "-c", "python manage.py runserver 0.0.0.0:8080"]
