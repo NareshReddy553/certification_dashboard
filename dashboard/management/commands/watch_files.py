@@ -34,8 +34,8 @@ class Command(BaseCommand):
                 self.watch_directory(directory_path)
             else:
                 try:
-                    os.makedirs(directory_path)
-                    logger.info("Create directory: %s", directory_path)
+                    # os.makedirs(directory_path)
+                    # logger.info("Create directory: %s", directory_path)
                     logger.error("Directory '%s' does not exist.", directory_path)
                     self.watch_directory(directory_path)
                 except OSError as e:

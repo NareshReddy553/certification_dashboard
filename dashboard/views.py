@@ -48,9 +48,9 @@ def dashBoard_data(request):
     # Apply filters to the queryset
     queryset = Certificates.objects.filter(**filters)
 
-    total_certificates_generated = queryset.values('id').distinct().count()
-    active_users_count = queryset.filter(is_active=True).values('id').distinct().count()
-    users_certificate_verified_count = queryset.filter(is_verified=True).values('id').distinct().count()
+    total_certificates_generated = queryset.distinct().count()
+    active_users_count = queryset.filter(is_active=True).annotate(user_count=Count('user', distinct=True)).values('user_count').distinct().count()
+    users_certificate_verified_count = queryset.filter(is_verified=True).distinct().count()
     
     data['total_certificates_generated']=total_certificates_generated
     data['active_users_count']=active_users_count
@@ -222,7 +222,7 @@ def generate_certificate_view(request):
 
     # Prepare the response with the zip archive
     response = HttpResponse(content_type='application/zip')
-    response['Content-Disposition'] = 'attachment; filename="certificates.zip"'
+    response['Content-Disposition'] = 'inline; filename="certificates.zip"'
     pdfs_buffer.seek(0)
     response.write(pdfs_buffer.getvalue())
 
