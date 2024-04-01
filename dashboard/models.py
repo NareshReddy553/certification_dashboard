@@ -324,6 +324,7 @@ class Certificates(models.Model):
     class Meta:
         managed = False
         db_table = 'certificates'
+        ordering = ['-id']
 
 
 
