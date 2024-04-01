@@ -71,7 +71,7 @@ class CertificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Certificates
-        fields = '__all__'
+        fields = ['id','user','student','course','certificatetype','department','created_at','certificate_id']
         
         
 

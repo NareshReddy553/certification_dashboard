@@ -23,6 +23,44 @@ class CertificatesViewSet(viewsets.ModelViewSet):
     serializer_class = CertificationSerializer    
     pagination_class = StandardResultsSetPagination
     
+    # def apply_dynamic_filters(self, queryset, **kwargs):
+    #     """
+    #     Apply dynamic filters to the given queryset based on provided kwargs.
+    #     """
+    #     for param, value in kwargs.items():
+    #         if hasattr(Certificates, param):
+    #             filter_kwargs = {param: value}
+    #             queryset = queryset.filter(**filter_kwargs)
+    #     return queryset 
+    # def paginated_response(self, queryset):
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return Response(serializer.data)
+
+    # def non_paginated_response(self, queryset, filter_params):
+    #     queryset = self.apply_dynamic_filters(queryset, **filter_params)
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return Response(serializer.data)
+    
+    # def list(self, request, *args, **kwargs):
+        
+        # queryset = self.filter_queryset(self.get_queryset())
+        
+        # # Retrieve filter values from request parameters
+        # filter_params = request.query_params.dict()
+        
+        # # Check if the parameter to disable pagination is provided
+        # disable_pagination = filter_params.pop('disable_pagination', None)
+        # queryset=self.apply_dynamic_filters(queryset, **filter_params)
+
+        # if disable_pagination:
+        #     return self.non_paginated_response(queryset, filter_params)
+        # else:
+        #     return self.paginated_response(queryset)
+    
     def apply_dynamic_filters(self, queryset, **kwargs):
         """
         Apply dynamic filters to the given queryset based on provided kwargs.
@@ -32,21 +70,8 @@ class CertificatesViewSet(viewsets.ModelViewSet):
                 filter_kwargs = {param: value}
                 queryset = queryset.filter(**filter_kwargs)
         return queryset 
-    def paginated_response(self, queryset):
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def non_paginated_response(self, queryset, filter_params):
-        queryset = self.apply_dynamic_filters(queryset, **filter_params)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
     
     def list(self, request, *args, **kwargs):
-        
         queryset = self.filter_queryset(self.get_queryset())
         
         # Retrieve filter values from request parameters
@@ -54,13 +79,17 @@ class CertificatesViewSet(viewsets.ModelViewSet):
         
         # Check if the parameter to disable pagination is provided
         disable_pagination = filter_params.pop('disable_pagination', None)
-        queryset=self.apply_dynamic_filters(queryset, **filter_params)
+        queryset = self.apply_dynamic_filters(queryset, **filter_params)
 
+        # Apply pagination or return non-paginated response based on the request
         if disable_pagination:
-            return self.non_paginated_response(queryset, filter_params)
+            page = None
         else:
-            return self.paginated_response(queryset)
-    
+            page = self.paginate_queryset(queryset)
+        
+        serializer = self.get_serializer(page, many=True) if page else self.get_serializer(queryset, many=True)
+        
+        return self.get_paginated_response(serializer.data) if page else Response(serializer.data)
 
     # @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     # def highlight(self, request, *args, **kwargs):
