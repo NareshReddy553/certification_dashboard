@@ -27,9 +27,10 @@ sudo rm -rf /var/lib/apt/lists/*
 sudo -s
 cd /etc/systemd/system
 vim certificate-dashboard.service
-systemctl deamon-reload
+systemctl daemon-reload
 systemctl start certificate-dashboard.service
 systemctl status certificate-dashboard.service
+systemctl enable certificate-dashboard.service
 sudo journalctl -u certificate-dashboard.service
 
 

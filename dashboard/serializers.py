@@ -2,14 +2,25 @@
 from rest_framework import serializers
 
 from dashboard.models import Certificates, Certificatetype, Course, Degree, Department, Student, StudentMarks, Users
+from dashboard.service import get_cached_certificatetype, get_cached_course, get_cached_degree, get_cached_user
 
 class DegreeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Degree
         fields = ['degree_id','degree_name']
+        
+class DepartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields =[ 'department_id','department_name']
+    
 class DepartmentSerializer(serializers.ModelSerializer):
-    degree=DegreeSerializer(read_only=True)
+    degree=serializers.SerializerMethodField()
+    
+    def get_degree(self, obj):
+        return get_cached_degree(obj.degree_id)
+        
     class Meta:
         model = Department
         fields =[ 'department_id','department_name','degree']
@@ -29,12 +40,10 @@ class UsersSerializer(serializers.ModelSerializer):
     
     def get_departments(self, instance):
         try:
-            certificates =Certificates.objects.filter(user=instance)
-            all_departments = []
-            for certificate in certificates:
-                if certificate.department_id:
-                    all_departments.append(certificate.department)
-            return DepartmentSerializer(all_departments, many=True).data
+            certificates = Certificates.objects.filter(user=instance).prefetch_related('department')
+            departments = [certificate.department for certificate in certificates if certificate.department_id]
+            serialized_departments = DepartSerializer(departments, many=True).data 
+            return serialized_departments
         except Certificates.DoesNotExist:
             return []
 
@@ -63,12 +72,26 @@ class CertificateUserSerializer(serializers.ModelSerializer):
         
 
 class CertificationSerializer(serializers.ModelSerializer):
-    user=CertificateUserSerializer(read_only=True)
-    student=StudentSerializer(read_only=True)
-    course=CourseSerializer(read_only=True)
-    certificatetype=CertificatetypeSerializer(read_only=True)
-    department=DepartmentSerializer(read_only=True)
+    # user=CertificateUserSerializer(read_only=True)
+    user = serializers.SerializerMethodField()
 
+    
+    student=StudentSerializer(read_only=True)
+    # course=CourseSerializer(read_only=True)
+    course=serializers.SerializerMethodField()
+    # certificatetype=CertificatetypeSerializer(read_only=True)
+    certificatetype=serializers.SerializerMethodField()
+    department=DepartmentSerializer(read_only=True)
+    
+    def get_user(self, obj):
+        return get_cached_user(obj.user_id)
+    
+    def get_course(self,obj):
+        return get_cached_course(obj.course_id)
+    
+    def get_certificatetype(self,obj):
+        return get_cached_certificatetype(obj.certificatetype_id)
+    
     class Meta:
         model = Certificates
         fields = ['id','user','student','course','certificatetype','department','created_at','certificate_id']

@@ -129,7 +129,9 @@ DATABASES = {
         "PASSWORD": "jIS-26M@Wm4!2)EM",
         "HOST": "188.166.94.246",
         "PORT": "36887",
-        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'",'connect_timeout': 30},
+        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+        'CONN_MAX_AGE': 30,
+        'CONN_HEALTH_CHECKS':True
     }
 }
 
@@ -214,3 +216,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 WATCH_FOLDER_PATH=r'C:\Users\ADMIN\Desktop\watch_folder'
+
+
+# User cache TTL, in seconds
+USER_CACHE_TTL = 900
