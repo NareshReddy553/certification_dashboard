@@ -12,12 +12,18 @@ logger = logging.getLogger(__name__)
 def calculate_sha256(file_path):
     logger.info("Calculating SHA-256 hash for file: %s", file_path)
     sha256_hash = hashlib.sha256()
-    with open(file_path, 'rb') as f:
-        while True:
-            data = f.read(65536)  # Read in 64KB chunks
-            if not data:
-                break
-            sha256_hash.update(data)
+    # with open(file_path, 'rb') as f:
+    #     while True:
+    #         data = f.read(65536)  # Read in 64KB chunks
+    #         if not data:
+    #             break
+    #         sha256_hash.update(data)
+    # return sha256_hash.hexdigest()
+    for chunk in file_path.chunks():  # Iterate over file chunks
+        sha256_hash.update(chunk)
+        
+    # Reset file pointer to the beginning of the file    
+    file_path.seek(0)
     return sha256_hash.hexdigest()
     
 # def extract_text_by_coordinates(pdf_path, x1, y1, x2, y2):

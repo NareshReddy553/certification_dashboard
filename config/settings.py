@@ -127,10 +127,10 @@ DATABASES = {
         "NAME": "ieee_poc_4Gi7WC_remote",
         "USER": "ieee_poc_4Gi7WC_remote",
         "PASSWORD": "jIS-26M@Wm4!2)EM",
-        "HOST": "188.166.94.246",
+        "HOST": "103.212.120.185",
         "PORT": "36887",
         "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
-        'CONN_MAX_AGE': 30,
+        # 'CONN_MAX_AGE': 30,
         'CONN_HEALTH_CHECKS':True
     }
 }

@@ -1,4 +1,5 @@
 import random
+from rest_framework import views, status
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.response import Response
@@ -17,7 +18,7 @@ from dashboard.data_parsing import certificate_data_extraction_from_pdf
 from dashboard.generate_certificate import pdf_creation
 from dashboard.models import Certificates, Configurations, Users
 
-from dashboard.serializers import UsersSerializer
+from dashboard.serializers import FileUploadSerializer, UsersSerializer
 import zipfile
 from io import BytesIO
 from faker import Faker
@@ -227,3 +228,18 @@ def generate_certificate_view(request):
     response.write(pdfs_buffer.getvalue())
 
     return response
+
+
+class ExtractPDFContentView(views.APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = FileUploadSerializer(data=request.data)
+        if serializer.is_valid():
+            pdf_file = serializer.validated_data['file']
+            try:
+                certificate_data_extraction_from_pdf(pdf_file)
+
+                return Response(status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

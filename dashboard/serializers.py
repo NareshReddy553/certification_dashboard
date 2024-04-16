@@ -100,3 +100,5 @@ class CertificationSerializer(serializers.ModelSerializer):
 
         
 
+class FileUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()

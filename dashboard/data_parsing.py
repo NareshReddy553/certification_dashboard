@@ -1,7 +1,8 @@
 import re
+from django.db import OperationalError
 import fitz
 import logging
-from datetime import datetime
+from datetime import datetime, time
 from dashboard.models import Certificates, Certificatetype, Course, Degree, Department, Student, StudentMarks
 from dashboard.util import calculate_sha256, extract_certificate_id, extract_course_name, extract_department_degree_names, extract_student_id
 
@@ -11,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def extract_text(file_path):
     try:
-        pdf_document = fitz.open(file_path)
+        pdf_document =fitz.open(stream=file_path.read(), filetype="pdf")
         page = pdf_document.load_page(0)  # Load only the first page
         page_text = page.get_text()
         return page_text.split('\n')
@@ -20,6 +21,7 @@ def extract_text(file_path):
         return []
 
 def certificate_data_extraction_from_pdf(file_path):
+    
     try:
         sha256_hash = calculate_sha256(file_path)
         logger.info("SHA256 hash of the PDF file: %s", sha256_hash)
