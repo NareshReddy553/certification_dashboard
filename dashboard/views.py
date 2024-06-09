@@ -12,11 +12,14 @@ from django.db import transaction
 # Create your views here.
 from rest_framework.decorators import api_view
 from django.db.models import Count, Case, When, IntegerField
-from django.db.models.functions import ExtractWeekDay, ExtractMonth
+from django.db.models.functions import ExtractWeekDay, ExtractMonth,TruncDay
 from config.settings import WATCH_FOLDER_PATH
 from dashboard.data_parsing import certificate_data_extraction_from_pdf
 from dashboard.generate_certificate import pdf_creation
 from dashboard.models import Certificates, Configurations, Users
+from django.db.models.functions import TruncDay
+from django.utils import timezone
+from datetime import  timedelta
 
 from dashboard.serializers import FileUploadSerializer, UsersSerializer
 import zipfile
@@ -80,13 +83,15 @@ def dashboard_chart_data(request):
     objects = Certificates.objects.filter(**filters)
     
     day_map = {
-            1: 'Mon',
-            2: 'Tue',
-            3: 'Wed',
-            4: 'Thu',
-            5: 'Fri',
-            6: 'Sat',
-            7: 'Sun'
+            
+            2: 'Mon',
+            3: 'Tue',
+            4: 'Wed',
+            5: 'Thu',
+            6: 'Fri',
+            7: 'Sat',
+            1: 'Sun'
+            
         }
 
     # Define a mapping from month number to month name
@@ -111,17 +116,22 @@ def dashboard_chart_data(request):
     # Initialize monthly data with zero counts for all months
     monthly_data = [{'month': month, 'count': 0, 'verified_users': 0} for month in month_map.values()]
 
-
+    today = timezone.now()
+    start_of_week = today - timedelta(days=today.weekday()) 
+    # Generate a list of all days for the current week
+    week_dates = [start_of_week + timedelta(days=i) for i in range(7)]
+    
     # Calculate weekly statistics
     weekly_counts = (
-        objects.annotate(day_of_week=ExtractWeekDay('created_at'))
+        objects.filter(created_at__date__gte=start_of_week, created_at__date__lte=today)
+                .annotate(day_of_week=ExtractWeekDay('created_at'))
                 .values('day_of_week')
                 .annotate(
                     count=Count('id'),
                     verified_users=Count(Case(When(is_verified=True, then=1), output_field=IntegerField()))
                 )
     )
-
+    
     # Update weekly_data with counts from the database query
     for entry in weekly_counts:
         day = day_map.get(entry['day_of_week'])
